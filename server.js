@@ -25,9 +25,6 @@ var spawn = require('child_process').spawn;
 var filename = process.ARGV[2];
 if (!filename) return util.puts("Usage: node <server.js> <filename>");
 
-var tail = spawn("tail", ["-f", filename]);
-
-
 // -- Node.js Server ----------------------------------------------------------
 
 server = http.createServer(function(req, res){
@@ -45,6 +42,7 @@ var io = io.listen(server);
 
 io.on('connection', function(client){
   console.log('Client connected');
+  var tail = spawn("tail", ["-f", filename]);
   client.send( { filename : filename } );
 
   tail.stdout.on("data", function (data) {
