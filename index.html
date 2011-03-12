@@ -46,8 +46,8 @@
         $('#info').html( '$ tail -f ' + message.filename );
       };
       if (message.tail) {
-        $('#tail').html( $('#tail').html() + message.tail );
-        lines++
+        $('#tail').append( message.tail.join('<br/>') );
+        lines+=message.tail.length;
         $('#tail').scrollTop(lines*100)
       }
     });

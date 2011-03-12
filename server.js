@@ -46,8 +46,8 @@ io.on('connection', function(client){
   client.send( { filename : filename } );
 
   tail.stdout.on("data", function (data) {
-    console.log(data.toString('utf-8'))
-    client.send( { tail : data.toString('utf-8') } )
+//    console.log(data.toString('utf-8'))
+    client.send( { tail : data.toString('utf-8').split("\n") } )
   }); 
 
 });
