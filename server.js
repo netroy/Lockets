@@ -1,32 +1,15 @@
 // ===================================
 // `tail -f` in Node.js and WebSockets
 // ===================================
-//
-// Usage:
-// 
-// git clone git://gist.github.com/718035.git tail.js
-// cd tail.js
-// git submodule update --init
-//
-// node server.js /path/to/your.log
-//
-// Connect with browser and watch changes in the logfile
-//
-//
-require.paths.unshift('./lib/socket-io/lib/',
-                      './lib/socket.io-node/lib/');
-
 var http    = require('http'),
     io      = require('socket.io'),
     fs      = require('fs');
 
-var spawn = require('child_process').spawn;
-
+var backlog_size = 2000;
 var filename = process.ARGV[2];
 if (!filename) return util.puts("Usage: node <server.js> <filename>");
 
-// -- Node.js Server ----------------------------------------------------------
-
+// -- Node.js HTTP Server ----------------------------------------------------------
 server = http.createServer(function(req, res){
   res.writeHead(200, {'Content-Type': 'text/html'})
   fs.readFile(__dirname + '/index.html', function(err, data){
@@ -37,19 +20,28 @@ server = http.createServer(function(req, res){
 server.listen(8000, '0.0.0.0');
 
 // -- Setup Socket.IO ---------------------------------------------------------
-
-var io = io.listen(server);
-
-io.on('connection', function(client){
-  console.log('Client connected');
-  var tail = spawn("tail", ["-f", filename]);
+var socket = io.listen(server);
+socket.on('connection', function(client){
   client.send( { filename : filename } );
+  fs.stat(filename,function(err,stats){
+    if (err) throw err;
+    var start = (stats.size > backlog_size)?(stats.size - backlog_size):0;
+    var stream = fs.createReadStream(filename,{start:start, end:stats.size});
+    stream.addListener("data", function(lines){
+      lines = lines.toString('utf-8');
+      lines = lines.slice(lines.indexOf("\n")+1).split("\n");
+      client.send({ tail : lines});
+    });
+  });
+});
 
-  tail.stdout.on("data", function (data) {
-//    console.log(data.toString('utf-8'))
-    client.send( { tail : data.toString('utf-8').split("\n") } )
-  }); 
-
+// watch the file now
+fs.watchFile(filename, function(curr, prev) {
+  if(prev.size > curr.size) return {clear:true};
+  var stream = fs.createReadStream(filename, { start: prev.size, end: curr.size});
+  stream.addListener("data", function(lines) {
+    socket.broadcast({ tail : lines.toString('utf-8').split("\n") });
+  });
 });
 
 console.log('Server running at http://0.0.0.0:8000/, connect with a browser to see tail output');

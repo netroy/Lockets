@@ -1,65 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>tail.js</title>
+  <title>Websockets tail Server</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-
-  <style>
-    body
-      { color: #1a2c37;
-        font-family: 'Helvetica', sans-serif; font-size: 86%;
-        padding: 2em; }
-    #info
-      { font-size: 120%;
-        font-weight: bold; }
-    #tail
-      { border: 1px solid #ccc;
-        height: 300px;
-        padding: 0.5em;
-        overflow: hidden;
-        position: relative;
-        overflow-y: scroll; }
+  <style type="text/css" rel="stylesheet">
+    body{background-color:#222;}
+    #info{ font-size: 32px; color:#000;text-shadow:#444 1px 1px 2px; text-align:right;margin:20px 10px;text-transform:lowercase;}
+    #tail{ border: 1px solid #444; overflow-x:hidden; overflow-y:auto; background-color:#333; color: #EEE; text-shadow:#000 0 0 2px; height: 400px; padding: 10px; font-size:12px; line-height:20px;}
+    .trebuchet{font-family: "Trebuchet MS","Lucida Sans Unicode","Lucida Grande","Lucida Sans",Arial,sans-serif;}
+    .monospace{font-family: Monaco,"Bitstream Vera Sans Mono","Lucida Console",Terminal,monospace;}
+    .selection::selection , .selection *::selection{background: #EEE;color:#000;border-color:#000; text-shadow:#fff 0 0 2px;}
+    .selection::-moz-selection , .selection *::-moz-selection{background: #EEE;color:#000;border-color:#000; text-shadow:#fff 0 0 2px;}
   </style>
-
 </head>
 <body>
-  <pre id="info"></pre>
-  <pre id="tail"></pre>
-
-  <script>
-
-  var Application = function() {
-    
+  <div id="info" class="trebuchet"></div>
+  <div id="tail" class="monospace selection"></div>
+  <script type="text/javascript">
+  (function() {
+    var lines = 0, notice = $("#info"), buffer = $('#tail');
     var socket  = new io.Socket(null, {port: 8000});
     socket.connect();
-
-    var lines = 0;
-
     socket.on('connect', function() {
       console.log('Connected to:', socket.host);
     });
     socket.on('message', function(message) {
-      console.log('Received message:', message);
       if (message.filename) {
-        $('#info').html( '$ tail -f ' + message.filename );
-      };
-      if (message.tail) {
-        $('#tail').append( message.tail.join('<br/>') );
-        lines+=message.tail.length;
-        $('#tail').scrollTop(lines*100)
-      }
+        notice.html( 'watching ' + message.filename );
+      }else if (message.tail) {
+        buffer.append( message.tail.join('<br/>') );
+        buffer.scrollTop(lines*100)
+        lines = lines + message.tail.length;
+      }else if(message.clear) {
+        $('$tail').empty();
+      }else console.log('Received message:', message);
     });
-    
-    return {
-      socket : socket
-    };
-  };
- 
-  $(function() { var app = Application(); });
-
+  })();
   </script>
-
 </body>
 </html>
