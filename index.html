@@ -7,8 +7,9 @@
   <script src="/socket.io/socket.io.js"></script>
   <style type="text/css" rel="stylesheet">
     body{background-color:#222;}
+    #selector{ float:left;}
     #info{ font-size: 32px; color:#000;text-shadow:#444 1px 1px 2px; text-align:right;margin:20px 10px;text-transform:lowercase;}
-    #tail{ border: 1px solid #444; overflow-x:hidden; overflow-y:auto; background-color:#333; color: #EEE; text-shadow:#000 0 0 2px; height: 400px; padding: 10px; font-size:12px; line-height:20px;}
+    #tail{ clear:both; border: 1px solid #444; overflow-x:hidden; overflow-y:auto; background-color:#333; color: #EEE; text-shadow:#000 0 0 2px; height: 400px; padding: 10px; font-size:12px; line-height:20px;}
     .trebuchet{font-family: "Trebuchet MS","Lucida Sans Unicode","Lucida Grande","Lucida Sans",Arial,sans-serif;}
     .monospace{font-family: Monaco,"Bitstream Vera Sans Mono","Lucida Console",Terminal,monospace;}
     .selection::selection , .selection *::selection{background: #EEE;color:#000;border-color:#000; text-shadow:#fff 0 0 2px;}
@@ -16,6 +17,7 @@
   </style>
 </head>
 <body>
+  <div id="selector"><select><option value="" selected>-- select a log --</option></select></div>
   <div id="info" class="trebuchet"></div>
   <div id="tail" class="monospace selection"></div>
   <script type="text/javascript">
@@ -27,7 +29,22 @@
       console.log('Connected to:', socket.host);
     });
     socket.on('message', function(message) {
-      if (message.filename) {
+      if (message.logs){
+        var selector = $("#selector select");
+        $.each(message.logs,function(){
+          var log = new Option(this,this);
+          if ($.browser.msie) selector[0].add(log);
+          else selector[0].add(log,null);
+        });
+        selector.bind('change',function(e){
+          var log = selector[0];
+          if(log.selectedIndex == 0){
+            $("#info,#tail").empty();
+            return;
+          }
+          socket.send({log:log.options[log.selectedIndex].value});
+        });
+      }else if (message.filename) {
         notice.html( 'watching ' + message.filename );
       }else if (message.tail) {
         buffer.append( message.tail.join('<br/>') );
