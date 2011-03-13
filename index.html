@@ -51,7 +51,7 @@
         buffer.scrollTop(lines*100)
         lines = lines + message.tail.length;
       }else if(message.clear) {
-        $('$tail').empty();
+        $('#tail').empty();
       }else console.log('Received message:', message);
     });
   })();

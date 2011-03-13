@@ -39,9 +39,14 @@ socket.on('connection', function(client){
       fs.unwatchFile(filename);
       filename = log_dir + message.log;
       client.send({filename: filename});
+
       // send some back log
       fs.stat(filename,function(err,stats){
         if (err) throw err;
+        if (stats.size == 0){
+          client.send({clear:true});
+          return;
+        }
         var start = (stats.size > backlog_size)?(stats.size - backlog_size):0;
         var stream = fs.createReadStream(filename,{start:start, end:stats.size});
         stream.addListener("data", function(lines){
