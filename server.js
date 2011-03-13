@@ -5,7 +5,7 @@ var http    = require('http'),
     io      = require('socket.io'),
     fs      = require('fs');
 
-var backlog_size = 2000;
+var backlog_size = 5000;
 var log_dir = "/var/log/";
 var logs = [];
 // look up the dir for logs
