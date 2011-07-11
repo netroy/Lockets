@@ -6,14 +6,19 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <style type="text/css" rel="stylesheet">
-    body{background-color:#222;}
+    body{background-color:#333;}
     #selector{ float:left;}
-    #info{ font-size: 32px; color:#000;text-shadow:#444 1px 1px 2px; text-align:right;margin:20px 10px;text-transform:lowercase;}
-    #tail{ clear:both; border: 1px solid #444; overflow-x:hidden; overflow-y:auto; background-color:#333; color: #EEE; text-shadow:#000 0 0 2px; height: 400px; padding: 10px; font-size:12px; line-height:20px;}
+    #info{ height:40px; font-size: 32px; color:#000;text-shadow:#777 1px 1px 2px; text-align:right;margin:20px 10px;text-transform:lowercase;}
+    #tail{ clear:both; border: 1px solid #555; overflow-x:hidden; overflow-y:auto; background-color:#444; color: #EEE; text-shadow:#000 0 0 2px; height: 400px; padding: 10px; font-size:12px; line-height:20px;}
     .trebuchet{font-family: "Trebuchet MS","Lucida Sans Unicode","Lucida Grande","Lucida Sans",Arial,sans-serif;}
     .monospace{font-family: Monaco,"Bitstream Vera Sans Mono","Lucida Console",Terminal,monospace;}
     .selection::selection , .selection *::selection{background: #EEE;color:#000;border-color:#000; text-shadow:#fff 0 0 2px;}
     .selection::-moz-selection , .selection *::-moz-selection{background: #EEE;color:#000;border-color:#000; text-shadow:#fff 0 0 2px;}
+    
+    ::-webkit-scrollbar {width: 6px;}
+    ::-webkit-scrollbar-track-piece { border-radius: 3px; }
+    ::-webkit-scrollbar-thumb{ background: #555; width: 5px; border-radius: 10px; opacity: 0.2;}
+    div:hover::-webkit-scrollbar-thumb { background-color: #ccc; opacity: 1.0;}
   </style>
 </head>
 <body>
@@ -23,10 +28,14 @@
   <script type="text/javascript">
   (function() {
     var lines = 0, notice = $("#info"), buffer = $('#tail');
-    var socket  = new io.Socket(null, {port: 8000});
-    socket.connect();
+    function rescale(){
+      $("#tail").height($(window).height()-120);
+    }
+    rescale();
+    $(window).resize(rescale);
+    var socket  = io.connect();
     socket.on('connect', function() {
-      console.log('Connected to:', socket.host);
+      console.log('Connected');
     });
     socket.on('message', function(message) {
       if (message.logs){
@@ -42,7 +51,7 @@
             $("#info,#tail").empty();
             return;
           }
-          socket.send({log:log.options[log.selectedIndex].value});
+          socket.emit('message', {log:log.options[log.selectedIndex].value});
         });
       }else if (message.filename) {
         notice.html( 'watching ' + message.filename );
@@ -52,7 +61,7 @@
         lines = lines + message.tail.length;
       }else if(message.clear) {
         $('#tail').empty();
-      }else console.log('Received message:', message);
+      }else console.log(message);
     });
   })();
   </script>

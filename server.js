@@ -29,22 +29,24 @@ server = http.createServer(function(req, res){
 server.listen(8000);
 
 // -- Setup Socket.IO ---------------------------------------------------------
-var socket = io.listen(server);
-socket.on('connection', function(client){
+var io = io.listen(server);
+io.set('log level', 0);
+
+io.sockets.on('connection', function(client){
   var filename;
-  client.send( { logs : logs } );
+  client.json.send( { logs : logs } );
   client.on("message",function(message){
     if(message.log){
       // Stop watching the last file and send the new one
       fs.unwatchFile(filename);
       filename = log_dir + message.log;
-      client.send({filename: filename});
+      client.json.send({filename: filename});
 
       // send some back log
       fs.stat(filename,function(err,stats){
         if (err) throw err;
         if (stats.size == 0){
-          client.send({clear:true});
+          client.json.send({clear:true});
           return;
         }
         var start = (stats.size > backlog_size)?(stats.size - backlog_size):0;
@@ -52,7 +54,7 @@ socket.on('connection', function(client){
         stream.addListener("data", function(lines){
           lines = lines.toString('utf-8');
           lines = lines.slice(lines.indexOf("\n")+1).split("\n");
-          client.send({ tail : lines});
+          client.json.send({ tail : lines});
         });
       });
 
@@ -61,7 +63,7 @@ socket.on('connection', function(client){
         if(prev.size > curr.size) return {clear:true};
         var stream = fs.createReadStream(filename, { start: prev.size, end: curr.size});
         stream.addListener("data", function(lines) {
-          client.send({ tail : lines.toString('utf-8').split("\n") });
+          client.json.send({ tail : lines.toString('utf-8').split("\n") });
         });
       });
 
