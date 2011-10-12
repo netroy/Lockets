@@ -19,8 +19,21 @@
     ::-webkit-scrollbar-track-piece { border-radius: 3px; }
     ::-webkit-scrollbar-thumb{ background: #555; width: 5px; border-radius: 10px; opacity: 0.2;}
     ol:hover::-webkit-scrollbar-thumb { background-color: #ccc; opacity: 1.0;}
-    
     #tail li:hover { background:#000; }
+    
+    /* Yellow-fade thanks to @snookca: http://snook.ca/archives/html_and_css/yellow-fade-technique-css-animations */
+    #tail li {
+      -webkit-animation: target-fade 3s 1;
+      -moz-animation: target-fade 3s 1;
+    }
+    @-webkit-keyframes target-fade {
+      0% { background-color: rgba(255,255,0,0.2); }
+      100% { background-color: rgba(0,0,0,0); }
+    }
+    @-moz-keyframes target-fade {
+      0% { background-color: rgba(255,255,0,0.2); }
+      100% { background-color: rgba(0,0,0,0); }
+    }
   </style>
 </head>
 <body>
