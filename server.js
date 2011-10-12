@@ -6,7 +6,7 @@ var http    = require('http'),
     fs      = require('fs');
 
 var backlog_size = 5000;
-var log_dir = "/var/log/";
+var log_dir = process.argv.length > 2 ? process.argv[2] :  "/var/log/";
 var logs = [];
 // look up the dir for logs
 fs.readdir(log_dir, function(err,files){
