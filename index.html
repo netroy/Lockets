@@ -18,13 +18,13 @@
     ::-webkit-scrollbar {width: 6px;}
     ::-webkit-scrollbar-track-piece { border-radius: 3px; }
     ::-webkit-scrollbar-thumb{ background: #555; width: 5px; border-radius: 10px; opacity: 0.2;}
-    div:hover::-webkit-scrollbar-thumb { background-color: #ccc; opacity: 1.0;}
+    ol:hover::-webkit-scrollbar-thumb { background-color: #ccc; opacity: 1.0;}
   </style>
 </head>
 <body>
   <div id="selector"><select><option value="" selected>-- select a log --</option></select></div>
   <div id="info" class="trebuchet"></div>
-  <div id="tail" class="monospace selection"></div>
+  <ol id="tail" class="monospace selection"></ol>
   <script type="text/javascript">
   (function() {
     var lines = 0, notice = $("#info"), buffer = $('#tail');
@@ -56,7 +56,13 @@
       }else if (message.filename) {
         notice.html( 'watching ' + message.filename );
       }else if (message.tail) {
-        buffer.append( message.tail.join('<br/>') );
+        message.tail.forEach(function(entry){
+          if(!entry) return;
+          var li = $('<li>');
+          li.text(entry);
+          buffer.append(li);
+        });
+        
         buffer.scrollTop(lines*100)
         lines = lines + message.tail.length;
       }else if(message.clear) {
