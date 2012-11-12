@@ -4,6 +4,7 @@
 var http    = require('http'),
     io      = require('socket.io'),
     fs      = require('fs');
+var path = require('path');
 
 var backlog_size = 5000;
 var log_dir = process.argv.length > 2 ? process.argv[2] :  "/var/log/";
@@ -14,18 +15,21 @@ fs.readdir(log_dir, function(err,files){
   files = Array.prototype.sort.apply(files,[]);
   for(var file in files){
     file = files[file];
-    if(fs.statSync(log_dir+file).isFile()) logs.push(file);
+    if(fs.statSync(path.join(log_dir,file)).isFile()) logs.push(file);
   }
 });
 
 // -- Node.js HTTP Server ----------------------------------------------------------
 server = http.createServer(function(req, res){
-  res.writeHead(200, {'Content-Type': 'text/html'})
+  res.writeHead(200, {
+    'Content-Type': 'text/html'
+  });
+
   fs.readFile(__dirname + '/index.html', function(err, data){
     res.write(data, 'utf8');
     res.end();
   });
-})
+});
 server.listen(8000);
 
 // -- Setup Socket.IO ---------------------------------------------------------
@@ -39,13 +43,13 @@ io.sockets.on('connection', function(client){
     if(message.log){
       // Stop watching the last file and send the new one
       fs.unwatchFile(filename);
-      filename = log_dir + message.log;
+      filename = join(log_dir, message.log);
       client.json.send({filename: filename});
 
       // send some back log
       fs.stat(filename,function(err,stats){
         if (err) throw err;
-        if (stats.size == 0){
+        if (stats.size === 0){
           client.json.send({clear:true});
           return;
         }
