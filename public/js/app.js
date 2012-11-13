@@ -55,17 +55,20 @@ $(function() {
     });
 
     selector.bind('change',function(e){
+
       var log = selector[0];
+
       if(log.selectedIndex === 0){
-        $('#info,#tail').empty();
+        $('#info, #tail').empty();
         return;
       }
+
+      buffer.empty();
       socket.emit('request', log.options[log.selectedIndex].value);
     });
   });
 
   socket.on('select', function(fileName) {
-    buffer.empty();
     notice.html('watching ' + fileName);
   });
 
@@ -92,6 +95,8 @@ $(function() {
   socket.on('clear', function() {
     buffer.empty();
   });
+
+  socket.on('err', log);
 
   socket.on('message', log);
 });
