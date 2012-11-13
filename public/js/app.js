@@ -14,6 +14,28 @@ $(function() {
   $win.resize(rescale);
   rescale();
 
+  var scrollToggle = $('#scrollToggle');
+  scrollToggle.click(function() {
+    scrollToggle.toggleClass('down');
+  });
+
+  // highlight matches
+  var filterBox = $('#filter');
+  filterBox.bind('input', function() {
+
+    var matcher = filterBox.val();
+    var lis = buffer.find('li');
+
+    if(!matcher.length) {
+      lis.removeClass('matching');
+    } else {
+      lis.each(function(index, li) {
+        var isMatching = new RegExp(matcher, 'ig').test(li.innerText);
+        $(li).toggleClass('matching', isMatching);
+      });
+    }
+  });
+
   var log = console.log.bind(console, 'TAIL');
 
   var socket  = io.connect();
@@ -21,8 +43,8 @@ $(function() {
     log('Connected');
   });
 
+  var selector = $('#selector select');
   socket.on('list', function(logFiles) {
-    var selector = $("#selector select");
     $.each(logFiles, function() {
       var log = new Option(this,this);
       if ($.browser.msie) {
@@ -35,16 +57,15 @@ $(function() {
     selector.bind('change',function(e){
       var log = selector[0];
       if(log.selectedIndex === 0){
-        $("#info,#tail").empty();
+        $('#info,#tail').empty();
         return;
       }
-      socket.emit('message', {
-        'log':log.options[log.selectedIndex].value
-      });
+      socket.emit('request', log.options[log.selectedIndex].value);
     });
   });
 
   socket.on('select', function(fileName) {
+    buffer.empty();
     notice.html('watching ' + fileName);
   });
 
@@ -61,7 +82,10 @@ $(function() {
       buffer.append(li);
     });
 
-    buffer.scrollTop(lines * 100);
+    if(!scrollToggle.hasClass('down')) {
+      buffer.scrollTop(lines * 100);
+    }
+
     lines = lines + backLog.length;
   });
 
