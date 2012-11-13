@@ -7,7 +7,7 @@
   'use strict';
 
   var socketIO = require('socket.io');
-  var optmist = require('optimist');
+  var optimist = require('optimist');
   var connect = require('connect');
   var stylus  = require('stylus');
 
@@ -15,8 +15,13 @@
   var fs = require('fs');
   var path = require('path');
 
+  var argv = optimist.usage('Usage: $0 --watch [file or directory to watch]')
+                     .demand(['watch'])
+                     .default('watch', '/tmp')
+                     .argv;
+
   // Directory to watch
-  var logDir = process.argv.length > 2 ? process.argv[2] :  "/tmp";
+  var logDir = argv.watch;
 
   // Create an connect app
   var app = connect();
