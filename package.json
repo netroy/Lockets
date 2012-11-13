@@ -1,0 +1,31 @@
+{
+  "name": "lockets",
+  "version": "0.1.0",
+  "description": "Tail -f in node.js",
+  "keywords": [],
+  "author": {
+    "name": "Aditya",
+    "email": "aditya@netroy.in"
+  },
+  "license": {
+    "type": "MIT"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/netroy/lockets.git"
+  },
+  "directories": {},
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "dependencies": {
+    "connect": "2.4.5",
+    "optimist": "0.3.5",
+    "socket.io": "0.9.10",
+    "stylus": "0.29.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "vows --spec tests/*"
+  }
+}

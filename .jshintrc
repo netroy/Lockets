@@ -1,0 +1,33 @@
+{
+  // Globals
+  "predef": [
+    "console",
+    "require",
+    "module",
+    "exports",
+    "Buffer",
+    "process",
+    "setTimeout",
+    "__dirname"
+  ],
+
+  // ES5 Strict mode on
+  "es5": true,
+  "strict": true,
+  "esnext": false,
+
+  // Each block must be wrapped in curly-braces
+  "curly": true,
+
+  // Allow ExpressionStatements
+  "expr": true,
+
+  // Require capitalization of all constructor function-names
+  "newcap": true,
+
+  // Fail for trailing white-spaces
+  "trailing": true,
+
+  // mandate 2-space indentation
+  "indent": 2
+}
