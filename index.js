@@ -46,9 +46,10 @@
 
     io.sockets.on('connection', require('./lib/io-handler')(logDir, logFiles));
 
-    httpServer.listen(8007);
+    var port = parseInt(process.env.PORT || 8000, 10);
+    httpServer.listen(port);
 
-    console.log('Log Server running now at http://0.0.0.0:8007/');
+    console.log('Log Server running now \n\thttp://0.0.0.0:' + port + '/');
   });
 
   module.exports = httpServer;
