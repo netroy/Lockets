@@ -1,4 +1,4 @@
-# Lockster
+# Lockets
 
 Node.js application to observe (`tail -f`) a directory of logfiles including a web frontend to display them.
 
