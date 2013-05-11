@@ -1,11 +1,8 @@
 body
-  background-color: #333
+  background-color: #000
 
 #selector
   float: left
-
-#scrollToggle.down
-   background: #888;
 
 #info
   height: 40px
@@ -16,14 +13,38 @@ body
   margin: 20px 10px
   text-transform: lowercase
 
+.meta
+  background: url(../img/meta-bg.png)
+  background-size: 13px 2px
+  background-position: bottom
+  background-repeat: repeat-x
+  padding: 0px 0px 10px 10px
+  overflow: hidden
+  z-index: 1000
+
+#top_fade 
+  width: 100%
+  height: 25px
+  z-index: 99
+  position: fixed
+  top: 52px
+  background: url("../img/top-fade.png") bottom center
+
+#bottom_fade 
+  width: 100%
+  height: 25px
+  z-index: 99
+  position: fixed
+  bottom: 40px
+  background: url("../img/bottom-fade.png") bottom center
+
 #tail
   clear: both
-  border: 1px solid #555
   overflow-x: hidden
   overflow-y: auto
-  background-color: #444
-  color: #EEE
-  text-shadow: #000 0 0 2px
+  background-color: #000
+  color: #00ff00
+  text-shadow: lime 0 0 2px
   height: 400px
   padding: 10px
   font-size: 12px
@@ -67,7 +88,7 @@ ol:hover::-webkit-scrollbar-thumb
   opacity: 1.0
 
 #tail li:hover
-  background: #000
+  background: #222
 
 /* Yellow-fade thanks to @snookca: http://snook.ca/archives/html_and_css/yellow-fade-technique-css-animations */
 

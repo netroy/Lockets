@@ -8,15 +8,18 @@
   <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 <body>
-  <div id="selector">
-    <select>
-      <option value="" selected>-- select a log --</option>
-    </select>
-    <button id="scrollToggle">Lock Scroll</button>
-    <input type="text" id="filter" size=15 placeholder="filter">
+  <div class="meta">
+    <div id="selector">
+      <select>
+        <option value="" selected>-- select a log --</option>
+      </select>
+      <button id="scrollToggle">Disable auto-scroll</button>
+      <input type="text" id="filter" size=15 placeholder="filter">
+    </div>
   </div>
-  <div id="info" class="trebuchet"></div>
+  <div id="top_fade"></div>
   <ol id="tail" class="monospace selection"></ol>
+    <div id="bottom_fade"></div>
   <script type="text/javascript" src = "js/app.js"></script>
 </body>
 </html>

@@ -17,6 +17,11 @@ $(function() {
   var scrollToggle = $('#scrollToggle');
   scrollToggle.click(function() {
     scrollToggle.toggleClass('down');
+    if ($(this).hasClass("down")) {
+      $(this).html("Enable auto-scroll");
+    }else{
+      $(this).html("Disable auto-scroll");
+    }
   });
 
   // highlight matches
