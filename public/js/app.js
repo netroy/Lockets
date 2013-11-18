@@ -41,6 +41,12 @@ $(function() {
     }
   });
 
+  // Clear buffer
+  var clearBuffer = $('#clearBuffer');
+  clearBuffer.click(function(){
+	buffer.empty();
+  });
+
   var log = console.log.bind(console, 'TAIL');
 
   var socket  = io.connect();
